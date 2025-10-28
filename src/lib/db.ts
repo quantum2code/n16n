@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-
+import * as schema from "../db/schema";
 const globalForPg = global as unknown as { pool: Pool };
 const pool =
   globalForPg.pool ??
@@ -9,6 +9,6 @@ const pool =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPg.pool = pool;
-const db = drizzle({ client: pool });
+const db = drizzle({ client: pool, schema });
 
 export { db };
