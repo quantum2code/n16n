@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { usersTable } from "@/db/schema";
+import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
-export default function Home() {
+const Home = async () => {
+  const users = await db.select().from(usersTable);
   return (
     <div
       className={cn(
@@ -10,6 +13,9 @@ export default function Home() {
       )}
     >
       <Button>Click me</Button>
+      <p>{JSON.stringify(users)}</p>
     </div>
   );
-}
+};
+
+export default Home;
