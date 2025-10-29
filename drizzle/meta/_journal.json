@@ -15,6 +15,13 @@
       "when": 1761669815718,
       "tag": "0001_swift_phalanx",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761750705774,
+      "tag": "0002_fantastic_lethal_legion",
+      "breakpoints": true
     }
   ]
 }
