@@ -1,25 +1,14 @@
-import { z } from "zod";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { user } from "@/schema/auth-schema";
+import { inngest } from "@/inngest/client";
 export const appRouter = createTRPCRouter({
-  hello: baseProcedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query((opts) => {
-      return {
-        greeting: `hello ${opts.input.text}`,
-      };
-    }),
-  getUsers: protectedProcedure.query(({ ctx }) =>
-    db.query.user.findMany({
-      where: eq(user.id, ctx.auth.session.userId),
-    })
-  ),
+  createWorkflow: protectedProcedure.mutation(async () => {
+    await inngest.send({
+      name: "test/demo",
+    });
+    return { success: true };
+  }),
+  getWorkflow: protectedProcedure.query(() => db.query.workflow.findMany()),
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
