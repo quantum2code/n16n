@@ -9,15 +9,18 @@ import {
 } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const Home = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data } = useQuery(trpc.getWorkflow.queryOptions());
-  const create = useMutation(
-    trpc.createWorkflow.mutationOptions({
-      onSuccess: () =>
-        queryClient.invalidateQueries(trpc.createWorkflow.mutationOptions()),
+  const fetchText = useMutation(
+    trpc.testAI.mutationOptions({
+      onSuccess: () => {
+        toast.success("massage is queued");
+        queryClient.invalidateQueries(trpc.getWorkflow.queryOptions());
+      },
     })
   );
   return (
@@ -27,8 +30,8 @@ const Home = () => {
       )}
     >
       <p className="">{JSON.stringify(data, null, 2)}</p>
-      <Button disabled={create.isPending} onClick={() => create.mutate()}>
-        Create Workflow
+      <Button disabled={fetchText.isPending} onClick={() => fetchText.mutate()}>
+        Send msg
       </Button>
       <LogOut />
     </div>
