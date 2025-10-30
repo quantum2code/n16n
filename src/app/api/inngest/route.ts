@@ -1,8 +1,8 @@
 import { serve } from "inngest/next";
 import { inngest } from "../../../inngest/client";
-import { demoWorkflow } from "@/inngest/functions";
+import { groqText } from "@/inngest/functions";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [demoWorkflow],
+  functions: [groqText],
 });
