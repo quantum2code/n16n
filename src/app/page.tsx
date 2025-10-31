@@ -10,6 +10,8 @@ import {
 import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { TRPCError } from "@trpc/server";
+import * as Sentry from "@sentry/nextjs";
 
 const Home = () => {
   const trpc = useTRPC();
@@ -21,8 +23,13 @@ const Home = () => {
         toast.success("massage is queued");
         queryClient.invalidateQueries(trpc.getWorkflow.queryOptions());
       },
+      onError: () => {
+        throw new TRPCError({ message: "test AI failed", code: "NOT_FOUND" });
+      },
     })
   );
+  Sentry.logger.info("User triggered test log", { log_source: "sentry_test" });
+
   return (
     <div
       className={cn(
