@@ -11,6 +11,11 @@ export const groqText = inngest.createFunction(
     await step.sleep("wait-a-moment", "5s");
     const { steps } = await step.ai.wrap("gro-generate-text", generateText, {
       prompt: "How many rs are in the word strawberry?",
+      experimental_telemetry: {
+        isEnabled: true,
+        recordInputs: true,
+        recordOutputs: true,
+      },
       providerOptions: {
         groq: {
           reasoningFormat: "parsed",
