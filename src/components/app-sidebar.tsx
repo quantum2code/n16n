@@ -25,22 +25,20 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/authClient";
+import { useHasActiveSubscription } from "@/features/auth/components/subcriptions/use-subscription";
 
 const AppSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
   const footerItems = [
-    {
-      title: "Upgrade to Pro",
-      icon: StarIcon,
-      url: "/",
-      cb: () => null,
-    },
     {
       title: "Billing portal",
       icon: CreditCardIcon,
       url: "",
-      cb: () => null,
+      cb: () => {
+        authClient.customer.portal();
+      },
     },
     {
       title: "Log Out",
@@ -128,6 +126,20 @@ const AppSidebar = () => {
 
       <SidebarFooter>
         <SidebarMenu>
+          {!hasActiveSubscription && !isLoading && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={() => {
+                  authClient.checkout({
+                    slug: "n16n-pro",
+                  });
+                }}
+              >
+                <StarIcon />
+                <span>Upgrade to Pro</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           {footerItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild onClick={() => item.cb()}>
