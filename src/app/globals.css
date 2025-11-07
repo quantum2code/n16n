@@ -210,3 +210,18 @@
 .react-flow__node.selected #base-node {
   @apply ring-3 ring-muted-foreground/25 shadow-lg;
 }
+
+.squircle {
+  corner-shape: squircle;
+  border-radius: 90px;
+}
+
+.checkerboard-conic {
+  background: conic-gradient(
+    var(--color-orange-300) 0deg 90deg,
+    var(--color-orange-100) 90deg 180deg,
+    var(--color-orange-300) 180deg 270deg,
+    var(--color-orange-100) 270deg 360deg
+  );
+  background-size: 45px 45px; /* Size of each checkerboard square */
+}
