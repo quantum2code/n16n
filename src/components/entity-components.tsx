@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { LinkIcon, PlusIcon } from "lucide-react";
+import { LinkIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { Input } from "./ui/input";
 
 type EntityHeaderProps = {
   title: string;
@@ -31,13 +32,13 @@ export const EntityHeader = ({
         </div>
         <div className="pr-4 flex-1 justify-end bg-linear-90 to-orange-100 to-90% from-transparent flex items-center">
           {onNew && !newButtonHref && (
-            <Button onClick={onNew}>
+            <Button disabled={disabled && isCreating} onClick={onNew}>
               <PlusIcon />
               {newButtonLabel}
             </Button>
           )}
           {newButtonHref && !onNew && (
-            <Button variant="outline" asChild>
+            <Button disabled={disabled && isCreating} variant="outline" asChild>
               <Link href={newButtonHref}>
                 <LinkIcon />
                 {newButtonLabel}
@@ -75,6 +76,71 @@ export const EntityContainer = ({
           {pagination}
         </div>
       )}
+    </div>
+  );
+};
+
+interface EntitySearchProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+}
+
+export const EntitySearch = ({
+  value,
+  onChange,
+  placeholder = "Search",
+}: EntitySearchProps) => {
+  return (
+    <div className="relative ml-auto w-full max-w-sm">
+      <SearchIcon className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        aria-label="Search"
+        className="pl-10 pr-3 py-2 w-full border-border"
+      />
+    </div>
+  );
+};
+
+interface EntityPaginationProps {
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  disabled?: boolean;
+}
+
+export const EntityPagination = ({
+  page,
+  totalPages,
+  onPageChange,
+  disabled,
+}: EntityPaginationProps) => {
+  return (
+    <div className="flex items-center justify-between space-x-2 py-4 ">
+      <span className="text-sm text-muted-foreground">
+        Page {totalPages === 0 ? 0 : page} of {totalPages}
+      </span>
+      <div className="flex gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={disabled || page <= 1}
+          onClick={() => onPageChange(page - 1)}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={disabled || page >= totalPages}
+          onClick={() => onPageChange(page + 1)}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

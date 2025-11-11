@@ -1,3 +1,4 @@
+import { PAGINATION } from "@/config/constants";
 import { db } from "@/lib/db";
 import { workflow } from "@/schema/schema";
 import {
@@ -5,7 +6,7 @@ import {
   premiumProcedure,
   protectedProcedure,
 } from "@/trpc/init";
-import { eq } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
 
@@ -49,9 +50,45 @@ export const workflowRouter = createTRPCRouter({
           eq(workflow.id, input.id) && eq(workflow.userId, ctx.auth.user.id),
       });
     }),
-  getMany: protectedProcedure.query(({ ctx }) => {
-    return db.query.workflow.findMany({
-      where: (workflow, { eq }) => eq(workflow.userId, ctx.auth.user.id),
-    });
-  }),
+  getMany: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(PAGINATION.DEFAULT_PAGE_NUMBER),
+        pageSize: z
+          .number()
+          .max(PAGINATION.MAX_PAGE_SIZE)
+          .min(PAGINATION.MIN_PAGE_SIZE)
+          .default(PAGINATION.DEFAULT_PAGE_SIZE),
+        search: z.string().default(""),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, pageSize, search } = input;
+      const [items, totalItems] = await Promise.all([
+        db.query.workflow.findMany({
+          where: (workflow, { eq, and, like }) =>
+            and(
+              eq(workflow.userId, ctx.auth.user.id),
+              search ? like(workflow.name, `%${search}%`) : undefined
+            ),
+          limit: pageSize,
+          offset: (page - 1) * pageSize,
+        }),
+        db.$count(
+          workflow,
+          and(
+            eq(workflow.userId, ctx.auth.user.id),
+            search ? like(workflow.name, `%${search}%`) : undefined
+          )
+        ),
+      ]);
+
+      const totalPages = Math.ceil(totalItems / pageSize);
+      return {
+        items,
+        totalItems,
+        totalPages,
+        page,
+      };
+    }),
 });
