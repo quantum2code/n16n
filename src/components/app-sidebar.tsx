@@ -25,7 +25,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/authClient";
-import { useHasActiveSubscription } from "@/features/auth/components/subcriptions/use-subscription";
+import { useHasActiveSubscription } from "@/features/subcriptions/use-subscription";
 
 const AppSidebar = () => {
   const router = useRouter();

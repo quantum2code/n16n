@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "../init";
-import { workflowRouter } from "@/features/auth/components/workflows/server/routers";
+import { workflowRouter } from "@/features/workflows/server/routers";
 
 export const appRouter = createTRPCRouter({
   // createWorkflow: protectedProcedure.mutation(async () => {
