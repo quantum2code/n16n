@@ -29,8 +29,12 @@ export const workflowRouter = createTRPCRouter({
       return db
         .delete(workflow)
         .where(
-          eq(workflow.id, input.id) && eq(workflow.userId, ctx.auth.user.id)
-        );
+          and(eq(workflow.id, input.id), eq(workflow.userId, ctx.auth.user.id))
+        )
+        .returning({
+          id: workflow.id,
+          name: workflow.name,
+        });
     }),
   updateName: protectedProcedure
     .input(z.object({ id: z.number(), name: z.string() }))
@@ -39,7 +43,7 @@ export const workflowRouter = createTRPCRouter({
         .update(workflow)
         .set({ name: input.name })
         .where(
-          eq(workflow.userId, ctx.auth.user.id) && eq(workflow.id, input.id)
+          and(eq(workflow.userId, ctx.auth.user.id), eq(workflow.id, input.id))
         );
     }),
   getOne: protectedProcedure
