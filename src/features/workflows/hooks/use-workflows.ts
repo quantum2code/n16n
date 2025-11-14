@@ -25,3 +25,20 @@ export const useCreateWorkflows = () => {
     })
   );
 };
+
+export const useDeleteWorkflow = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.remove.mutationOptions({
+      onSuccess: ([data]) => {
+        toast.success(`Workflow "${data.name}" deleted`);
+        // queryClient.invalidateQueries(
+        //   trpc.workflows.getOne.queryFilter({ id: data.id })
+        // );
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
+      },
+      onError: (err) => toast.error(`Workflow delete error: ${err.message}`),
+    })
+  );
+};

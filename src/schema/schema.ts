@@ -6,9 +6,11 @@ export const workflow = pgTable("workflow", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
   userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
 });
+
+export const WorkflowType = workflow.$inferSelect;
 
 export const usersRelations = relations(user, ({ many }) => ({
   workflows: many(workflow),
