@@ -42,3 +42,24 @@ export const useDeleteWorkflow = () => {
     })
   );
 };
+
+export const useSuspenseWorkflow = (id: number) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.workflows.getOne.queryOptions({ id }));
+};
+
+export const useUpdateWorkflowName = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.updateName.mutationOptions({
+      onSuccess: ([data]) => {
+        toast.success(`Workflow renamed to "${data.name}"`);
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryFilter({ id: data.id })
+        );
+      },
+      onError: (err) => toast.error(`Workflow rename error: ${err.message}`),
+    })
+  );
+};
